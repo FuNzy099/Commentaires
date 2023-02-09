@@ -1,0 +1,93 @@
+.container {
+    padding-top: 15px;
+}
+
+.showProductCard {
+    display: flex;
+    flex-direction: row;
+}
+
+/* .showProductCard img {
+    width: 20%;
+} */
+
+.show{
+    display: flex;
+    flex-direction: column;
+}
+
+.show .buttonShow{
+    align-self: end;
+    /* margin-top: 70px; */
+}
+
+.show .paragraphShow{
+    margin-top: 25px;
+}
+
+
+
+/* --------------- PARTIE CONCERNANT LA CARD DES AVIS ---------------  */
+
+.opinion h1{
+    text-align: center;
+    margin: 25px 0;
+}
+
+.containOpinion{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.cardOpinion{
+    width: 50%;
+}
+
+.card-header{
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    border-bottom: none;
+}
+
+.card-header p{
+    margin: 3px;
+}
+
+.card-header .note{
+    font-size: 1.5em;
+}
+
+.card-body .createDate{
+    text-align: end;
+}
+
+.card-body img{
+    width: 150px;
+}
+
+
+
+/* --------------- PARTIE CONCERNANT LE FORMULAIRE D'AVIS ---------------  */
+
+
+.postOpinion{
+    border: 1px black solid;
+    margin-bottom: 35px;
+}
+
+.form-group{
+    width: 80%;
+    margin: 15px auto;
+}
+
+.postOpinion h1, .postOpinion p{
+    text-align: center;
+}
+
+.postOpinion .submit{
+    text-align: center;
+}
+

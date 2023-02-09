@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceuil{% endblock %}
+
+{% block body %}
+
+    <h1> Nos Produits </h1>
+
+    <div class="row">
+        {% for product in products %}
+            
+       
+            <div class="col">
+                <div class="card">
+                    <img src="{{ product.mainPicture }}" class="img-fluid" alt="Image correspondant au produit">
+
+                    <div class="card-body">
+                        <h4 class="card-title">{{ product.name}}</h4>
+                        <p class="class-text">{{ product.description|slice(1, 50)~'...' }}</p>
+                        <a href="#" class="btn btn-primary bt-sm">Détail</a>
+                        <a href="#" class="btn btn-succes btn-sm">Ajouter</a>
+
+                    </div>
+                </div>
+            </div>
+            
+        {% endfor %}
+
+        
+    </div>   
+
+{% endblock %}

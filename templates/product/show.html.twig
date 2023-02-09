@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Page du produit : {{ slug }} {% endblock %}
+
+{% block body %}
+
+
+
+    {# Partie concernant le produit (Nom, desciription, etc) #}
+    <div class="row">
+       
+        <div class="col">
+            <div class="card showProductCard">
+                <img src="{{ product.mainPicture }}" class="img-fluid" alt="Image correspondant au produit">
+
+                <div class="card-body show">
+
+                    <h1 class="card-title">{{ product.name}}</h1>
+                    <p class="class-text paragraphShow">{{ product.description}}</p>
+                    <div class="buttonShow">
+                        <a href="#" class="btn btn-success btn-sm">Ajouter</a>
+                        {# <a href="#" class="btn btn-primary btn-sm">Commenter</a> #}
+                    </div>
+
+                </div>
+            </div>
+         </div>
+
+    </div>
+
+    {# Partie concernant les avis des utilisateurs #}
+    <div class="opinion">
+        
+        <h1>Liste des avis concernant ce produit : </h1>
+
+        {% for opinion in product.opinions %}
+        
+            <sdiv class="col containOpinion">
+
+                <div class="card cardOpinion">
+
+                    <div class="card-header ">
+
+                        <section class="titleOpinion">
+                            <h4 class="card-title"> <i class="fa-solid fa-user"></i> {{ opinion.pseudonyme}}</h4>
+                            <p> <i class="fa-solid fa-at"></i> {{ opinion.email }}</p>
+                        </section>
+
+                        <p class="note"> Note : {{ opinion.note }}/5 </p>
+                        
+                    </div>
+
+                    <div class="card-body">
+
+                        <p class="card-text">{{ opinion.comment|purify }}</p>
+                        {% if opinion.picture != null %}
+                            <a href="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" target="_blank">
+                                <img src="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" alt="Photo de l'utilisateur du produit" target="_blank">
+                            </a>
+                    
+                        {% endif %}
+                        <p class="createDate">posté le : {{ opinion.createDate|date('d/m/Y') }}</p>
+
+
+                    </div>
+                    
+                </div>
+            </sdiv>
+            
+        {% endfor %}
+    </div>
+
+
+
+    <div class="postOpinion">
+
+        <h1> votre avis nous intéresse ! </h1>
+        <p> Si vous souhaitez poster un avis concernant ce produit, veuillez remplir les champs suivants :</p>
+
+        {{form_start(formAddOpinion)}}
+
+            {{form_row(formAddOpinion.pseudonyme)}}
+            {{form_row(formAddOpinion.email)}}
+            {{form_row(formAddOpinion.note)}}
+            {{form_row(formAddOpinion.comment)}}
+            {{form_row(formAddOpinion.picture)}}
+            <div class="submit">
+                {{form_row(formAddOpinion.submit)}}
+
+            </div>
+            
+        {{form_end(formAddOpinion)}}
+
+    </div>
+
+    
+
+
+
+{% endblock %}
