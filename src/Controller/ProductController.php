@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Opinion;
+use App\Data\SearchData;
 use App\Form\OpinionType;
+use App\Form\SearchType;
 use App\Repository\OpinionRepository;
 use App\Repository\ProductRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,8 +28,16 @@ class ProductController extends AbstractController
         // Permet de recuperer le produit correspond au slug dans l'url
         $product = $productRepository -> findOneBy(['slug' => $slug]);
 
-        // Permet de recuperer les avis du produit
-        $opinions = $opinionRepository -> findAll([]);
+        $data = new SearchData;
+
+        $data -> page = $request->get('page', 1);
+
+        /*
+            Permet de recuperer les avis du produit en question,
+
+            la methode search est presente dans OpinionRepository.
+        */
+        $opinions = $opinionRepository -> search($data, $slug);
 
         // Condition verifiant si le produit demandé existe.
         if(!$product){
@@ -39,8 +49,10 @@ class ProductController extends AbstractController
             throw $this -> createNotFoundException("Le produit n'existe pas ! ");
         }
 
+        // Creation du formulaire d'avis qui ce base sur OpinionType
         $form = $this->createForm(OpinionType::class, $opinion);
 
+        // Permet d'analyser la requette
         $form -> handleRequest($request);
 
         // Condition permettant de verifier si le formulaire est soumit et si les données saisi sont valides

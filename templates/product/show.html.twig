@@ -17,10 +17,6 @@
 
                     <h1 class="card-title">{{ product.name}}</h1>
                     <p class="class-text paragraphShow">{{ product.description}}</p>
-                    <div class="buttonShow">
-                        <a href="#" class="btn btn-success btn-sm">Ajouter</a>
-                        {# <a href="#" class="btn btn-primary btn-sm">Commenter</a> #}
-                    </div>
 
                 </div>
             </div>
@@ -33,68 +29,93 @@
         
         <h1>Liste des avis concernant ce produit : </h1>
 
-        {% for opinion in product.opinions %}
-        
-            <sdiv class="col containOpinion">
 
-                <div class="card cardOpinion">
+        {# Condition permettant de verifier si le produit contient des avis #}
+        {% if product.opinions|length !=  0 %}
 
-                    <div class="card-header ">
-
-                        <section class="titleOpinion">
-                            <h4 class="card-title"> <i class="fa-solid fa-user"></i> {{ opinion.pseudonyme}}</h4>
-                            <p> <i class="fa-solid fa-at"></i> {{ opinion.email }}</p>
-                        </section>
-
-                        <p class="note"> Note : {{ opinion.note }}/5 </p>
-                        
-                    </div>
-
-                    <div class="card-body">
-
-                        <p class="card-text">{{ opinion.comment|purify }}</p>
-                        {% if opinion.picture != null %}
-                            <a href="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" target="_blank">
-                                <img src="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" alt="Photo de l'utilisateur du produit" target="_blank">
-                            </a>
-                    
-                        {% endif %}
-                        <p class="createDate">posté le : {{ opinion.createDate|date('d/m/Y') }}</p>
-
-
-                    </div>
-                    
-                </div>
-            </sdiv>
+            {# Boutton pour filtrer les avis par date et note #}
+            <div class="filterDateNote">
+                {{ knp_pagination_sortable(opinions, 'Note', 'opinion.note') }}
+                {{ knp_pagination_sortable(opinions, 'Date', 'opinion.createDate') }}
+            </div>
             
-        {% endfor %}
+            
+            {% for opinion in opinions %}
+
+                {# Condition dans le but de verifier si le product.id de l'opignion est égale au product.id #}
+                {% if opinion.product.id == product.id %}
+
+                    <div class="col containOpinion">
+
+                        <div class="card cardOpinion">
+
+                            {# 
+                                Header de la carte de l'avis de l'utilisateur, cette partie contient :
+                                    - les informations de l'utilisateur (Pseudonyme et Email) 
+                                    - la note du produit
+                            #}
+                            <div class="card-header ">
+
+                                <section class="titleOpinion">
+                                    <h4 class="card-title"> <i class="fa-solid fa-user"></i> {{ opinion.pseudonyme}}</h4>
+                                    <p> <i class="fa-solid fa-at"></i> {{ opinion.email }}</p>
+                                </section>
+
+                                <p class="note"> Note : {{ opinion.note }}/5 </p>
+                                
+                            </div>
+
+                            {# 
+                                Body de la carte de l'avis de l'utilisateur, cette partie contient :
+                                    - Le commentaire 
+                                    - l'image si il en hexiste une
+                                    - La date de publication
+                            #}
+                            <div class="card-body">
+
+                                <p class="card-text">{{ opinion.comment|purify }}</p>
+
+                                {% if opinion.picture != null %}
+
+                                    <a href="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" target="_blank">
+                                        <img src="{{ asset('img/picturesUpload/' ~ opinion.picture) }}" alt="Photo de l'utilisateur du produit" target="_blank">
+                                    </a>
+
+                                {% endif %}
+
+                                <p class="createDate">posté le : {{ opinion.createDate|date('d/m/Y à H:i') }}</p>
+
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                
+                {% endif %}
+                 
+            {% endfor %}
+            
+                {# Pagination #}
+                <div class="pagination">
+                    {{ knp_pagination_render(opinions) }}
+                </div>
+
+        {# Sinon, si le produit ne contient pas d'avis #}
+        {% else %}
+                <p class="infoPasAvis"> Il n'y a aucun avis.. Soyez le premier à nous donner le votre en remplissant le formulaire ci-dessous </p>
+        {% endif %} 
+
     </div>
 
 
-
+    {# Partie concernant le formulaire d'avis #}
     <div class="postOpinion">
 
         <h1> votre avis nous intéresse ! </h1>
         <p> Si vous souhaitez poster un avis concernant ce produit, veuillez remplir les champs suivants :</p>
 
-        {{form_start(formAddOpinion)}}
-
-            {{form_row(formAddOpinion.pseudonyme)}}
-            {{form_row(formAddOpinion.email)}}
-            {{form_row(formAddOpinion.note)}}
-            {{form_row(formAddOpinion.comment)}}
-            {{form_row(formAddOpinion.picture)}}
-            <div class="submit">
-                {{form_row(formAddOpinion.submit)}}
-
-            </div>
-            
-        {{form_end(formAddOpinion)}}
+        {% include "_shared/_formAvis.html.twig" %}
 
     </div>
-
-    
-
-
 
 {% endblock %}

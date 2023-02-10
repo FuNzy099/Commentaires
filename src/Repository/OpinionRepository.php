@@ -2,9 +2,13 @@
 
 namespace App\Repository;
 
+use App\Data\SearchData;
 use App\Entity\Opinion;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Opinion>
@@ -16,9 +20,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OpinionRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Opinion::class);
+        $this -> paginator = $paginator;
     }
 
     public function add(Opinion $entity, bool $flush = false): void
@@ -37,6 +42,46 @@ class OpinionRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return PaginationInterface
+     */
+    public function search(SearchData $search, $slug): PaginationInterface{
+
+        $query = $this
+            ->createQueryBuilder('opinion')
+            ->innerJoin('opinion.product', 'product')
+            ->andwhere('product.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->orderBy('opinion.createDate', 'DESC');
+
+            if (!empty($search->q)) {
+                $query = $query
+                    ->andWhere('opinion.pseudonyme LIKE :q')
+                    ->setParameter('q', "%{$search->q}%");
+            }
+    
+
+        if (!empty($search->min)) {
+            $query = $query
+                ->andWhere('opinion.note >= :min')
+                ->setParameter('min', $search->min);
+        }
+
+        if (!empty($search->max)) {
+            $query = $query
+                ->andWhere('opinion.note <= :max')
+                ->setParameter('max', $search->max);
+        }
+
+        $query = $query -> getQuery();
+
+        return $this -> paginator -> paginate(
+            $query,
+            $search -> page,
+            3
+        );
     }
 
 //    /**
